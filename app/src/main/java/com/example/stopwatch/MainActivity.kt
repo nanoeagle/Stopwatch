@@ -21,7 +21,20 @@ class MainActivity : AppCompatActivity() {
 
         stopwatch = findViewById(R.id.stopwatch)
 
+        reinstateStopwatchIfSaved(savedInstanceState)
         setListenersForButtons()
+    }
+
+    private fun reinstateStopwatchIfSaved(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            running = savedInstanceState.getBoolean(RUNNING_KEY)
+            offset = savedInstanceState.getLong(OFFSET_KEY)
+
+            if (running) {
+                stopwatch.base = savedInstanceState.getLong(BASE_KEY)
+                stopwatch.start()
+            } else setBaseTime()
+        }
     }
 
     private fun setBaseTime() {
@@ -64,5 +77,12 @@ class MainActivity : AppCompatActivity() {
         setBaseTime()
         stopwatch.stop()
         if (running) running = false;
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(RUNNING_KEY, running)
+        outState.putLong(OFFSET_KEY, offset)
+        outState.putLong(BASE_KEY, stopwatch.base)
+        super.onSaveInstanceState(outState)
     }
 }

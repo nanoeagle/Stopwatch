@@ -15,6 +15,13 @@ class MainActivity : AppCompatActivity() {
     private var running = false
     private var offset: Long = 0
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(RUNNING_KEY, running)
+        outState.putLong(OFFSET_KEY, offset)
+        outState.putLong(BASE_KEY, stopwatch.base)
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -79,27 +86,8 @@ class MainActivity : AppCompatActivity() {
         if (running) running = false;
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(RUNNING_KEY, running)
-        outState.putLong(OFFSET_KEY, offset)
-        outState.putLong(BASE_KEY, stopwatch.base)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        interruptStopwatchIfRunning()
-    }
-
-    private fun interruptStopwatchIfRunning() {
-        if (running) {
-            saveOffset()
-            stopwatch.stop()
-        }
-    }
-
-    override fun onRestart() {
-        super.onRestart()
+    override fun onResume() {
+        super.onResume()
         resumeStopwatchIfRunning()
     }
 
@@ -107,6 +95,18 @@ class MainActivity : AppCompatActivity() {
         if (running) {
             setBaseTime()
             stopwatch.start()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        interruptStopwatchIfRunning()
+    }
+
+    private fun interruptStopwatchIfRunning() {
+        if (running) {
+            saveOffset()
+            stopwatch.stop()
         }
     }
 }

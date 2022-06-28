@@ -85,4 +85,28 @@ class MainActivity : AppCompatActivity() {
         outState.putLong(BASE_KEY, stopwatch.base)
         super.onSaveInstanceState(outState)
     }
+
+    override fun onStop() {
+        super.onStop()
+        interruptStopwatchIfRunning()
+    }
+
+    private fun interruptStopwatchIfRunning() {
+        if (running) {
+            saveOffset()
+            stopwatch.stop()
+        }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        resumeStopwatchIfRunning()
+    }
+
+    private fun resumeStopwatchIfRunning() {
+        if (running) {
+            setBaseTime()
+            stopwatch.start()
+        }
+    }
 }
